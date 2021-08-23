@@ -1,9 +1,11 @@
-import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewChildren} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Ingredient} from '../shared/ingredient.model';
-import {ShoppingService} from './shoppingService/shopping.service';
-import {Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {RecipeService} from '../recipes/recipeService/recipe.service';
-import {Recipe} from '../recipes/recipe.model';
+import {Store} from '@ngrx/store';
+import * as ShoppingListActions from './store/shopping-list.actions';
+import * as fromApp from '../store/app.reducer'
+
 
 @Component({
   selector: 'app-shopping-list',
@@ -13,26 +15,27 @@ import {Recipe} from '../recipes/recipe.model';
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
   @Input() index: number
-  ingredients: Ingredient[]
-  private igChangedSub: Subscription
-  constructor(private shoppingService: ShoppingService,
-              private recipeService: RecipeService) { }
+  ingredients: Observable<{ ingredients: Ingredient[] }>
+  constructor(private recipeService: RecipeService,
+              private store: Store<fromApp.AppState>
+              ) { }
 
   ngOnInit(): void {
-    this.ingredients = this.shoppingService.getIngredients()
+    this.ingredients = this.store.select('shoppingList')
+    // this.ingredients = this.shoppingService.getIngredients()
+    // this.igChangedSub = this.shoppingService.onChangeIngredient.subscribe((ingredients: Ingredient[]) => {
+    //   this.ingredients = ingredients
+    // })
 
-    this.igChangedSub = this.shoppingService.onChangeIngredient.subscribe((ingredients: Ingredient[]) => {
-      this.ingredients = ingredients
-    })
   }
 
   onEditItem(index: number) {
-    this.shoppingService.startedEditing.next(index)
+    // this.shoppingService.startedEditing.next(index)
+    this.store.dispatch(new ShoppingListActions.StartEdit(index))
   }
 
 
   ngOnDestroy() {
-    this.igChangedSub.unsubscribe()
   }
 
 }

@@ -1,5 +1,5 @@
-import {Directive, ElementRef, HostBinding, HostListener, Input} from '@angular/core';
-import {Event} from '@angular/router';
+import {Directive, ElementRef, HostBinding, HostListener} from '@angular/core';
+
 
 @Directive({
   selector: '[appDropdown]'

@@ -1,25 +1,22 @@
 import {Recipe} from '../recipe.model';
 import {Injectable} from '@angular/core';
 import {Ingredient} from '../../shared/ingredient.model';
-import {ShoppingService} from '../../shopping-list/shoppingService/shopping.service';
 import {Subject} from 'rxjs';
+import {Store} from '@ngrx/store';
+import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
+import * as fromApp from '../../store/app.reducer'
+
 
 @Injectable()
 export class RecipeService {
 recipesChanged = new Subject<Recipe[]>()
 
-  // private recipes: Recipe[] = [
-  //   new Recipe('A test recipe', 'Simple test','https://www.glutenfreeandmore.com/wp-content/uploads/2018/07/15latkes.jpg',
-  //     [new Ingredient('Meat', 1), new Ingredient('French Fries',30)]),
-  //   new Recipe('A test recipe', 'Simple test','https://www.glutenfreeandmore.com/wp-content/uploads/2018/07/15latkes.jpg',
-  //     [new Ingredient('Buns',2),new Ingredient('Meat', 1)]),
-  //   new Recipe('My new Recipe', 'It is so delicious','https://www.glutenfreeandmore.com/wp-content/uploads/2018/07/15latkes.jpg',
-  //     [new Ingredient('Buns',2),new Ingredient('Meat', 1)]),
-  //
-  // ]
   private recipes: Recipe[] = []
 
-  constructor(private shoppingService: ShoppingService) {
+  constructor(
+
+    private store: Store<fromApp.AppState>
+    ) {
   }
 
   setRecipes(recipes: Recipe[]) {
@@ -32,7 +29,8 @@ recipesChanged = new Subject<Recipe[]>()
   }
 
   addIngredientsToShopList(ingredient: Ingredient[]) {
-    this.shoppingService.addIngredients(ingredient)
+    // this.shoppingService.addIngredients(ingredient)
+    this.store.dispatch(new ShoppingListActions.AddIngredients(ingredient))
 
   }
 
